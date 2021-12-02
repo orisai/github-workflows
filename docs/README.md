@@ -37,7 +37,7 @@ Certain workflows can be configured through inputs. Inputs are defined via `with
 
 Lock inactive closed issues and PRs after period of time.
 
-`lock-closed-issues-and-prs.yaml`:
+`lock-closed-threads.yaml`:
 
 ```yaml
 name: "Lock inactive closed issues and PRs"
@@ -48,7 +48,7 @@ on:
 
 jobs:
   lock:
-    uses: "orisai/github-workflows/.github/workflows/lock-closed-issues-and-prs.yaml@v1.x"
+    uses: "orisai/github-workflows/.github/workflows/lock-closed-threads.yaml@v1.x"
 ```
 
 Inputs:
