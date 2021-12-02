@@ -3,6 +3,17 @@ name: "Lock inactive closed issues and PRs"
 on:
   workflow_call:
 
+inputs:
+  issue-lock-inactive-days:
+    description: "Lock inactive issue after X days"
+    required: false
+    default: "30"
+
+  pr-lock-inactive-days:
+    description: "Lock inactive PR after X days"
+    required: false
+    default: "60"
+
 jobs:
   lock:
     name: "Lock"
@@ -14,14 +25,14 @@ jobs:
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
-          issue-lock-inactive-days: "32"
+          issue-lock-inactive-days: "${{ inputs.issue-lock-inactive-days }}"
           issue-lock-reason: "resolved"
           issue-lock-comment: >
             This issue has been automatically locked since there
             has not been any recent activity after it was closed.
             Please open a new issue for related bugs.
 
-          pr-lock-inactive-days: "96"
+          pr-lock-inactive-days: "${{ inputs.pr-lock-inactive-days }}"
           pr-lock-reason: "resolved"
           pr-lock-comment: >
             This pull request has been automatically locked since there
