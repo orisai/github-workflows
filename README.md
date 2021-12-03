@@ -1,7 +1,7 @@
 <h1 align="center">Orisai Github Workflows</h1>
 
 <p align="center">
-    <a href="https://docs.github.com/en/actions">Github Actions</a> reusable workflows
+    <a href="https://docs.github.com/en/actions">Github Actions</a> reusable workflows and composed actions
 </p>
 
 <p align=center>

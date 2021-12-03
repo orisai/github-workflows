@@ -1,0 +1,30 @@
+name: "PHPUnit"
+description: "Run PHPUnit"
+
+inputs:
+  command:
+    required: true
+    description: "PHPUnit command"
+
+  cache-path:
+    required: true
+    description: "PHPUnit cache path"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: "Cache PHPUnit data"
+      uses: "actions/cache@v2"
+      with:
+        path: "${{ inputs.cache-path }}"
+        key: "ori-php-phpunit-${{ runner.os }}"
+        restore-keys: "ori-php-phpunit-${{ runner.os }}"
+
+    - name: "Setup problem matchers for PHPUnit"
+      shell: "bash"
+      run: 'echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"'
+
+    - name: "Tests"
+      shell: "bash"
+      run: "${{ inputs.command }}"

@@ -1,0 +1,26 @@
+name: "PHPStan"
+description: "Run PHPStan"
+
+inputs:
+  command:
+    required: true
+    description: "PHPStan command"
+
+  cache-path:
+    required: true
+    description: "PHPStan cache path"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: "Cache PHPStan data"
+      uses: "actions/cache@v2"
+      with:
+        path: "${{ inputs.cache-path }}"
+        key: "ori-php-phpstan-${{ runner.os }}"
+        restore-keys: "ori-php-phpstan-${{ runner.os }}"
+
+    - name: "PHPStan"
+      shell: "bash"
+      run: "${{ inputs.command }}"

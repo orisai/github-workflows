@@ -1,0 +1,25 @@
+name: "Coveralls - upload"
+description: "Upload report to coveralls via php-coveralls"
+
+inputs:
+  config:
+    required: true
+    description: "Configuration file of php-coveralls"
+
+  token:
+    required: true
+    description: "GitHub token for Coveralls"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: "Send coverage report to Coveralls"
+      env:
+        COVERALLS_PARALLEL: "true"
+        COVERALLS_FLAG_NAME: "run-${{ env.GITHUB_RUN_ID }}"
+        COVERALLS_REPO_TOKEN: "${{ inputs.token }}"
+      shell: "bash"
+      run: |
+        composer global require php-coveralls/php-coveralls --prefer-dist --no-interaction --no-progress
+        php-coveralls -v --config "${{ inputs.config }}"

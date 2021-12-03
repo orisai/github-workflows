@@ -1,0 +1,32 @@
+name: "Infection PHP"
+description: "Run Infection PHP"
+
+inputs:
+  command:
+    required: true
+    description: "Infection command"
+
+  cache-path:
+    required: true
+    description: "Infection cache path"
+
+  stryker-token:
+    required: true
+    description: "Stryker token for submitting code coverage"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: "Cache Infection data"
+      uses: "actions/cache@v2"
+      with:
+        path: "${{ inputs.cache-path }}"
+        key: "ori-php-infection-${{ runner.os }}"
+        restore-keys: "ori-php-infection-${{ runner.os }}"
+
+    - name: "Mutation tests"
+      env:
+        STRYKER_DASHBOARD_API_KEY: "${{ inputs.stryker-token }}"
+      shell: "bash"
+      run: "${{ inputs.command }}"

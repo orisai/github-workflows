@@ -1,0 +1,37 @@
+name: "NodeJS"
+description: "Setup NodeJS dependencies"
+
+inputs:
+  version:
+    required: true
+    description: "NodeJS version"
+
+  command:
+    required: false
+    default: "npm ci"
+    description: "NodeJS's installation command"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: "Get NodeJS cache directory"
+      id: "node-npm-cache"
+      shell: "bash"
+      run: 'echo "::set-output name=dir::$(npm config get cache)"'
+
+    - name: "Cache NodeJS dependencies"
+      uses: "actions/cache@v2"
+      with:
+        path: "${{ steps.node-npm-cache.outputs.dir }}"
+        key: "ori-js-nodejs-${{ runner.os }}-${{ hashFiles('**/package.json', '**/package-lock.json') }}"
+        restore-keys: "ori-js-nodejs-${{ runner.os }}-"
+
+    - name: "Install NodeJS"
+      uses: "actions/setup-node@v1.4.4"
+      with:
+        node-version: "${{ inputs.version }}"
+
+    - name: "Install NodeJS dependencies"
+      shell: "bash"
+      run: "${{ inputs.command }}"

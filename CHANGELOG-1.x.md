@@ -7,4 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/orisai/github-workflows/compare/...HEAD)
 
-- Lock closed issues and PRs
+- Workflows
+	- Lock closed threads
+- Actions
+	- Setup PHP
+	- Setup Composer
+	- PHPUnit
+	- PHPStan
+	- PHP_Codesniffer
+	- Infection PHP
+	- Setup NodeJS
+	- Coveralls PHP Upload
+	- Coveralls finish

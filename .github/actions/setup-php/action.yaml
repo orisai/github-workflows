@@ -1,0 +1,62 @@
+name: "PHP"
+description: "Setup PHP"
+
+inputs:
+  version:
+    required: true
+    description: "PHP version"
+
+  coverage:
+    required: false
+    default: "none"
+    description: "Code coverage tool"
+
+  extensions:
+    required: false
+    default: "fileinfo, intl, json, mbstring, sodium"
+    description: "PHP extensions"
+
+  token:
+    required: true
+    description: "GitHub token for Composer to prevent being rate limited by GitHub API"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: "Create PHP extensions cache key"
+      uses: "actions/github-script@v3"
+      id: "php-extensions-cache-key"
+      with:
+        script: "return '${{ inputs.extensions }}'.replace(/, /g, '+');"
+        result-encoding: "string"
+
+    - name: "Setup PHP cache environment"
+      id: "php-extensions-cache"
+      uses: "shivammathur/cache-extensions@v1"
+      with:
+        php-version: "${{ inputs.version }}"
+        extensions: "${{ inputs.extensions }}"
+        key: "ori-php-src-${{ steps.php-extensions-cache-key.outputs.result }}"
+
+    - name: "Cache PHP extensions"
+      uses: "actions/cache@v2"
+      with:
+        path: "${{ steps.php-extensions-cache.outputs.dir }}"
+        key: "${{ steps.php-extensions-cache.outputs.key }}"
+        restore-keys: "${{ steps.php-extensions-cache.outputs.key }}"
+
+    - name: "Install PHP"
+      uses: "shivammathur/setup-php@v2"
+      with:
+        php-version: "${{ inputs.version }}"
+        extensions: "${{ inputs.extensions }}"
+        tools: "composer:v2"
+        coverage: "${{ inputs.coverage }}"
+        ini-values: "zend.assertions=1, assert.exception=1"
+      env:
+        COMPOSER_TOKEN: "${{ inputs.token }}"
+
+    - name: "Setup problem matchers for PHP"
+      shell: "bash"
+      run: 'echo "::add-matcher::${{ runner.tool_cache }}/php.json"'

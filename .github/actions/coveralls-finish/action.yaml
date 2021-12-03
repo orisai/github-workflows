@@ -1,0 +1,18 @@
+name: "Coveralls - finish"
+description: "Finish collecting code coverage"
+
+inputs:
+  token:
+    required: true
+    description: "GitHub token for Coveralls"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: "Coveralls Finished"
+      env:
+        COVERALLS_REPO_TOKEN: "${{ inputs.token }}"
+      shell: "bash"
+      run: |
+        curl -k "https://coveralls.io/webhook?repo_name=$GITHUB_REPOSITORY&repo_token=$COVERALLS_REPO_TOKEN" -d "payload[build_num]=$GITHUB_RUN_ID&payload[status]=done"

@@ -1,0 +1,26 @@
+name: "PHP_CodeSniffer"
+description: "Run PHP_CodeSniffer"
+
+inputs:
+  command:
+    required: true
+    description: "CodeSniffer command"
+
+  cache-path:
+    required: true
+    description: "CodeSniffer cache path"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: "Cache PHP_CodeSniffer data"
+      uses: "actions/cache@v2"
+      with:
+        path: "${{ inputs.cache-path }}"
+        key: "ori-php-codesniffer-${{ runner.os }}"
+        restore-keys: "ori-php-codesniffer-${{ runner.os }}"
+
+    - name: "Coding Standard"
+      shell: "bash"
+      run: "${{ inputs.command }}"
