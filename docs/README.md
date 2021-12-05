@@ -18,6 +18,11 @@
 	- [Setup NodeJS](#setup-nodejs)
 	- [Coveralls PHP upload](#coveralls-php-upload)
 	- [Coveralls finish](#coveralls-finish)
+- [Examples](#examples)
+	- [PHPUnit and Coveralls](#phpunit-and-coveralls-example)
+	- [PHPStan](#phpstan-example)
+	- [PHP_Codesniffer](#php_codesniffer-example)
+	- [Infection PHP](#infection-php-example)
 
 ## Setup
 
@@ -67,6 +72,8 @@ Inputs:
 ## Actions
 
 Multiple actions composed into one, simpler and easier to read action.
+
+Actions are designed to work together with others, check [examples](#examples) for full workflows using these actions.
 
 ### Inputs
 
@@ -153,6 +160,8 @@ Inputs:
 
 Run [PHPUnit](https://phpunit.de), store cached data between runs and reporting of issues via GitHub Actions interface.
 
+Expects you to have PHPUnit installed and have path to its cache set.
+
 ```yaml
 jobs:
   example:
@@ -160,7 +169,7 @@ jobs:
       - name: "PHPUnit"
         uses: "orisai/github-workflows/.github/actions/phpunit@v1.x"
         with:
-            command: "make coverage-clover"
+            command: "vendor/bin/phpunit"
             cache-path: "var/tools/PHPUnit"
 ```
 
@@ -182,6 +191,8 @@ Inputs:
 
 Run [PHPStan](https://phpstan.org) and store cached data between runs.
 
+Expects you to have PHPStan installed and have path to its cache set.
+
 ```yaml
 jobs:
   example:
@@ -189,7 +200,7 @@ jobs:
       - name: "PHPStan"
         uses: "orisai/github-workflows/.github/actions/phpstan@v1.x"
         with:
-            command: "make phpstan"
+            command: "vendor/bin/phpstan"
             cache-path: "var/tools/PHPStan"
 ```
 
@@ -211,6 +222,8 @@ Inputs:
 
 Run [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) and store cached data between runs.
 
+Expects you to have PHP_CodeSniffer installed and have path to its cache set.
+
 ```yaml
 jobs:
   example:
@@ -218,7 +231,7 @@ jobs:
       - name: "PHP_CodeSniffer"
         uses: "orisai/github-workflows/.github/actions/php-codesniffer@v1.x"
         with:
-            command: "make cs ARGS='--report=checkstyle -q | vendor/bin/cs2pr'"
+            command: "vendor/bin/phpcs"
             cache-path: "var/tools/PHP_CodeSniffer"
 ```
 
@@ -240,6 +253,8 @@ Inputs:
 
 Run [Infection PHP](https://infection.github.io), store cached data between runs and send coverage report to Stryker dashboard.
 
+Expects you to have Infection installed and have path to its cache set.
+
 ```yaml
 jobs:
   example:
@@ -247,7 +262,7 @@ jobs:
       - name: "Infection PHP"
         uses: "orisai/github-workflows/.github/actions/infection-php@v1.x"
         with:
-            command: "make mutations-infection ARGS='--logger-github'"
+            command: "vendor/bin/infection"
             cache-path: "var/tools/Infection"
             stryker-token: "${{ secrets.STRYKER_DASHBOARD_API_KEY }}"
 ```
@@ -358,3 +373,278 @@ Inputs:
 - GitHub token for Coveralls
 - type: `string`
 - required
+
+## Examples
+
+Complete workflow examples using our composed [actions](#actions).
+
+Be aware examples don't use the commands directly, but call `make` instead. All [Orisai](https://github.com/orisai)
+repositories are using Makefile with all the commands required for development and CI, and we would like to encourage
+you to do so too. You may clone e.g. [orisai/auth](https://github.com/orisai/auth) and check its Makefile. Or just use
+our [library template](https://github.com/orisai/library-template), and you are good to go.
+
+### PHPUnit and Coveralls example
+
+[PHPUnit](https://phpunit.de) run workflow example with code coverage report to [coveralls.io](https://coveralls.io).
+
+```yaml
+name: "Tests"
+
+on:
+  pull_request:
+    types: [ "opened", "synchronize", "edited", "reopened" ]
+    paths-ignore:
+      - "docs/**"
+  push:
+    branches:
+      - "**"
+    paths-ignore:
+      - "docs/**"
+  schedule:
+    - cron: "0 8 * * 1" # At 08:00 on Monday
+
+jobs:
+  tests:
+    name: "Tests"
+    runs-on: "${{ matrix.operating-system }}"
+
+    strategy:
+      matrix:
+        operating-system: [ "ubuntu-latest", "macos-latest", "windows-latest" ]
+        php-version: [ "7.4", "8.0", "8.1" ]
+        composer-flags: [ "" ]
+        include:
+          - operating-system: "ubuntu-latest"
+            php-version: "7.4"
+            composer-flags: "--prefer-lowest"
+      fail-fast: false
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "PHP"
+        uses: "orisai/github-workflows/.github/actions/setup-php@v1.x"
+        with:
+          version: "${{ matrix.php-version }}"
+          coverage: "pcov"
+          token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "Composer"
+        uses: "orisai/github-workflows/.github/actions/setup-composer@v1.x"
+
+      - name: "PHPUnit"
+        uses: "orisai/github-workflows/.github/actions/phpunit@v1.x"
+        with:
+          command: "make coverage-clover"
+          cache-path: "var/tools/PHPUnit"
+
+      - name: "Coveralls"
+        if: "${{ github.event_name == 'push' }}"
+        uses: "orisai/github-workflows/.github/actions/coveralls-php-upload@v1.x"
+        with:
+          config: "tools/.coveralls.yml"
+          token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "Upload logs"
+        uses: "actions/upload-artifact@v2"
+        with:
+          name: "Logs - Tests (${{ matrix.operating-system }}, ${{ matrix.php-version }}, ${{ matrix.composer-flags }})"
+          path: "var/log"
+          if-no-files-found: "ignore"
+
+  coverage-finish:
+    name: "Code coverage finish"
+    needs: "tests"
+    runs-on: "${{ matrix.operating-system }}"
+
+    strategy:
+      matrix:
+        include:
+          - operating-system: "ubuntu-latest"
+            php-version: "8.0"
+      fail-fast: false
+
+    steps:
+      - name: "Coveralls"
+        if: "${{ github.event_name == 'push' }}"
+        uses: "orisai/github-workflows/.github/actions/coveralls-finish@v1.x"
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+```
+
+### PHPStan example
+
+[PHPStan](https://phpstan.org) run workflow.
+
+```yaml
+name: "Static analysis"
+
+on:
+  pull_request:
+    types: [ "opened", "synchronize", "edited", "reopened" ]
+    paths-ignore:
+      - "docs/**"
+  push:
+    branches:
+      - "**"
+    paths-ignore:
+      - "docs/**"
+  schedule:
+    - cron: "0 8 * * 1" # At 08:00 on Monday
+
+jobs:
+  static-analysis:
+    name: "Static analysis"
+    runs-on: "${{ matrix.operating-system }}"
+
+    strategy:
+      matrix:
+        include:
+          - operating-system: "ubuntu-latest"
+            php-version: "8.0"
+      fail-fast: false
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "PHP"
+        uses: "orisai/github-workflows/.github/actions/setup-php@v1.x"
+        with:
+          version: "${{ matrix.php-version }}"
+          token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "Composer"
+        uses: "orisai/github-workflows/.github/actions/setup-composer@v1.x"
+
+      - name: "PHPStan"
+        uses: "orisai/github-workflows/.github/actions/phpstan@v1.x"
+        with:
+          command: "make phpstan"
+          cache-path: "var/tools/PHPStan"
+```
+
+### PHP_Codesniffer example
+
+[PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) run workflow.
+
+Uses `--report=checkstyle` argument and `vendor/bin/cs2pr` script
+from [staabm/annotate-pull-request-from-checkstyle](https://github.com/staabm/annotate-pull-request-from-checkstyle) to
+show errors in GitHub interface.
+
+```yaml
+name: "Coding standard"
+
+on:
+  pull_request:
+    types: [ "opened", "synchronize", "edited", "reopened" ]
+    paths-ignore:
+      - "docs/**"
+  push:
+    branches:
+      - "**"
+    paths-ignore:
+      - "docs/**"
+  schedule:
+    - cron: "0 8 * * 1" # At 08:00 on Monday
+
+jobs:
+  coding-standard:
+    name: "Coding standard"
+    runs-on: "${{ matrix.operating-system }}"
+
+    strategy:
+      matrix:
+        include:
+          - operating-system: "ubuntu-latest"
+            php-version: "8.0"
+      fail-fast: false
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "PHP"
+        uses: "orisai/github-workflows/.github/actions/setup-php@v1.x"
+        with:
+          version: "${{ matrix.php-version }}"
+          token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "Composer"
+        uses: "orisai/github-workflows/.github/actions/setup-composer@v1.x"
+
+      - name: "PHP_CodeSniffer"
+        uses: "orisai/github-workflows/.github/actions/php-codesniffer@v1.x"
+        with:
+          command: "make cs ARGS='--report=checkstyle -q | vendor/bin/cs2pr'"
+          cache-path: "var/tools/PHP_CodeSniffer"
+```
+
+### Infection PHP example
+
+[Infection PHP](https://infection.github.io) run workflow.
+
+```yaml
+name: "Mutations"
+
+on:
+  pull_request:
+    types: [ "opened", "synchronize", "edited", "reopened" ]
+    paths-ignore:
+      - "docs/**"
+  push:
+    branches:
+      - "**"
+    paths-ignore:
+      - "docs/**"
+  schedule:
+    - cron: "0 8 * * 1" # At 08:00 on Monday
+
+jobs:
+  tests-mutations:
+    name: "Test for mutants"
+    runs-on: "${{ matrix.operating-system }}"
+
+    strategy:
+      matrix:
+        include:
+          - operating-system: "ubuntu-latest"
+            php-version: "8.0"
+
+    if: "github.event_name == 'push'"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "PHP"
+        uses: "orisai/github-workflows/.github/actions/setup-php@v1.x"
+        with:
+          version: "${{ matrix.php-version }}"
+          coverage: "pcov"
+          token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "Composer"
+        uses: "orisai/github-workflows/.github/actions/setup-composer@v1.x"
+
+      - name: "PHPUnit"
+        uses: "orisai/github-workflows/.github/actions/phpunit@v1.x"
+        with:
+          command: "make mutations-tests"
+          cache-path: "var/tools/PHPUnit"
+
+      - name: "Infection PHP"
+        uses: "orisai/github-workflows/.github/actions/infection-php@v1.x"
+        with:
+          command: "make mutations-infection ARGS='--logger-github'"
+          cache-path: "var/tools/Infection"
+          stryker-token: "${{ secrets.STRYKER_DASHBOARD_API_KEY }}"
+
+      - name: "Upload logs"
+        uses: "actions/upload-artifact@v2"
+        with:
+          name: "Logs - Mutations"
+          path: "var/log"
+          if-no-files-found: "ignore"
+```
