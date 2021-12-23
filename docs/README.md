@@ -155,6 +155,8 @@ Inputs:
 - Composer's installation command
 - type: `string`
 - default: `"composer install --no-interaction --no-progress --prefer-dist"`
+- Preferably use something like `composer install --no-interaction --no-progress --no-dev --classmap-authoritative` for
+  projects
 
 ### PHPUnit
 
@@ -169,8 +171,8 @@ jobs:
       - name: "PHPUnit"
         uses: "orisai/github-workflows/.github/actions/phpunit@v1.x"
         with:
-            command: "vendor/bin/phpunit"
-            cache-path: "var/tools/PHPUnit"
+          command: "vendor/bin/phpunit"
+          cache-path: "var/tools/PHPUnit"
 ```
 
 Inputs:
@@ -200,8 +202,8 @@ jobs:
       - name: "PHPStan"
         uses: "orisai/github-workflows/.github/actions/phpstan@v1.x"
         with:
-            command: "vendor/bin/phpstan"
-            cache-path: "var/tools/PHPStan"
+          command: "vendor/bin/phpstan"
+          cache-path: "var/tools/PHPStan"
 ```
 
 Inputs:
@@ -231,8 +233,8 @@ jobs:
       - name: "PHP_CodeSniffer"
         uses: "orisai/github-workflows/.github/actions/php-codesniffer@v1.x"
         with:
-            command: "vendor/bin/phpcs"
-            cache-path: "var/tools/PHP_CodeSniffer"
+          command: "vendor/bin/phpcs"
+          cache-path: "var/tools/PHP_CodeSniffer"
 ```
 
 Inputs:
@@ -262,9 +264,9 @@ jobs:
       - name: "Infection PHP"
         uses: "orisai/github-workflows/.github/actions/infection-php@v1.x"
         with:
-            command: "vendor/bin/infection"
-            cache-path: "var/tools/Infection"
-            stryker-token: "${{ secrets.STRYKER_DASHBOARD_API_KEY }}"
+          command: "vendor/bin/infection"
+          cache-path: "var/tools/Infection"
+          stryker-token: "${{ secrets.STRYKER_DASHBOARD_API_KEY }}"
 ```
 
 Inputs:
@@ -293,16 +295,19 @@ Setup [NodeJS](https://nodejs.dev), with dependencies caching and installation.
 
 ```yaml
 jobs:
-    strategy:
-      matrix:
-        nodejs-version: [ "14" ]
+  strategy:
+    matrix:
+      nodejs-version: [ "14" ]
 
-    example:
-        steps:
-            - name: "NodeJS"
-              uses: "orisai/github-workflows/.github/actions/setup-nodejs@v1.x"
-              with:
-                  version: "${{ matrix.nodejs-version }}"
+  example:
+    steps:
+      - name: "NodeJS"
+        uses: "orisai/github-workflows/.github/actions/setup-nodejs@v1.x"
+        with:
+          version: "${{ matrix.nodejs-version }}"
+
+      - name: "Build assets"
+        run: "npm run start"
 ```
 
 Inputs:
@@ -333,8 +338,8 @@ jobs:
         if: "${{ github.event_name == 'push' }}"
         uses: "orisai/github-workflows/.github/actions/coveralls-php-upload@v1.x"
         with:
-            config: "tools/.coveralls.yml"
-            token: "${{ secrets.GITHUB_TOKEN }}"
+          config: "tools/.coveralls.yml"
+          token: "${{ secrets.GITHUB_TOKEN }}"
 ```
 
 Inputs:
@@ -363,7 +368,7 @@ jobs:
         if: "${{ github.event_name == 'push' }}"
         uses: "orisai/github-workflows/.github/actions/coveralls-finish@v1.x"
         with:
-            token: "${{ secrets.GITHUB_TOKEN }}"
+          token: "${{ secrets.GITHUB_TOKEN }}"
 ```
 
 Inputs:
