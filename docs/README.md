@@ -408,6 +408,10 @@ on:
   schedule:
     - cron: "0 8 * * 1" # At 08:00 on Monday
 
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
 jobs:
   tests:
     name: "Tests"
@@ -498,6 +502,10 @@ on:
   schedule:
     - cron: "0 8 * * 1" # At 08:00 on Monday
 
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
 jobs:
   static-analysis:
     name: "Static analysis"
@@ -554,6 +562,10 @@ on:
   schedule:
     - cron: "0 8 * * 1" # At 08:00 on Monday
 
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
 jobs:
   coding-standard:
     name: "Coding standard"
@@ -605,6 +617,10 @@ on:
       - "docs/**"
   schedule:
     - cron: "0 8 * * 1" # At 08:00 on Monday
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
 
 jobs:
   tests-mutations:
