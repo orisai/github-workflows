@@ -253,7 +253,8 @@ Inputs:
 
 ### Infection PHP
 
-Run [Infection PHP](https://infection.github.io), store cached data between runs and send coverage report to Stryker dashboard.
+Run [Infection PHP](https://infection.github.io), store cached data between runs and send coverage report
+to [Stryker dashboard](https://dashboard.stryker-mutator.io).
 
 Expects you to have Infection installed and have path to its cache set.
 
@@ -285,9 +286,9 @@ Inputs:
 
 `stryker-token`
 
-- Stryker token for submitting code coverage
+- [Stryker](https://dashboard.stryker-mutator.io) token for submitting code coverage
 - type: `string`
-- required
+- optional
 
 ### Setup NodeJS
 

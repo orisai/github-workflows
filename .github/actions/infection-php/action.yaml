@@ -11,7 +11,7 @@ inputs:
     description: "Infection cache path"
 
   stryker-token:
-    required: true
+    required: false
     description: "Stryker token for submitting code coverage"
 
 runs:
@@ -25,8 +25,14 @@ runs:
         key: "ori-php-infection-${{ runner.os }}"
         restore-keys: "ori-php-infection-${{ runner.os }}"
 
-    - name: "Mutation tests"
+    - name: "Mutation tests with report"
+      if: "${{ inputs.stryker-token }}"
       env:
         STRYKER_DASHBOARD_API_KEY: "${{ inputs.stryker-token }}"
+      shell: "bash"
+      run: "${{ inputs.command }}"
+
+    - name: "Mutation tests"
+      if: "${{ !inputs.stryker-token }}"
       shell: "bash"
       run: "${{ inputs.command }}"
