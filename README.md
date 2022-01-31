@@ -1,4 +1,8 @@
-<h1 align="center">Orisai Github Workflows</h1>
+<h1 align="center">
+	<img src="https://github.com/orisai/.github/blob/main/images/repo_title.png" alt="Orisai"/>
+	<br/>
+	Github Workflows
+</h1>
 
 <p align="center">
     <a href="https://docs.github.com/en/actions">Github Actions</a> reusable workflows and composed actions
