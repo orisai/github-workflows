@@ -13,7 +13,7 @@ inputs:
 
   extensions:
     required: false
-    default: "fileinfo, intl, json, mbstring, sodium"
+    default: "fileinfo, intl, json, mbstring, sodium, ssh2"
     description: "PHP extensions"
 
   token:
