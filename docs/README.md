@@ -1,6 +1,6 @@
-# Github Workflows
+# GitHub Workflows
 
-[Github Actions](https://docs.github.com/en/actions) reusable workflows and composed actions
+[GitHub Actions](https://docs.github.com/en/actions) reusable workflows and composed actions
 
 ## Content
 
