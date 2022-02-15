@@ -667,6 +667,6 @@ jobs:
         uses: "actions/upload-artifact@v2"
         with:
           name: "Logs - Mutations"
-          path: "var/log"
+          path: "var/coverage/mutations/infection.log"
           if-no-files-found: "ignore"
 ```
