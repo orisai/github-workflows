@@ -5,6 +5,7 @@
 ## Content
 
 - [Setup](#setup)
+	- [Choose the right version](#choose-the-right-version)
 - [Workflows](#workflows)
 	- [Lock closed issues and PRs](#lock-closed-issues-and-prs)
 - [Actions](#actions)
@@ -35,6 +36,20 @@ Setup any workflow with few simple steps:
 - Set `on` run condition (or use our recommended defaults)
 - Good to go!
 
+### Choose the right version
+
+GitHub Actions do not support version constraints. Due to this we are locked to specific release or branch of a workflow.
+
+With Orisai we have 3 version constraint types to choose from:
+
+> `orisai/github-workflows/.github/actions/setup-php@v1`
+
+- `@v1.x` - use branch `v1.x`, always get the latest commit from branch
+- `@1.0.0` - use tag `1.0.0` (or newer), pointing to single commit in time
+- `@v1` - use tag `v1`, pointing to the same commit as latest tag (`x.y.z`, e.g. `1.2.3`) in the same major version
+
+In all examples is used the `@v1` variant as a preferred way for most users and to always get the latest stable release.
+
 ## Workflows
 
 ### Lock closed issues and PRs
@@ -52,7 +67,7 @@ on:
 
 jobs:
   lock:
-    uses: "orisai/github-workflows/.github/workflows/lock-closed-threads.yaml@v1.x"
+    uses: "orisai/github-workflows/.github/workflows/lock-closed-threads.yaml@v1"
 ```
 
 Inputs:
@@ -103,7 +118,7 @@ jobs:
 
     steps:
       - name: "PHP"
-        uses: "orisai/github-workflows/.github/actions/setup-php@v1.x"
+        uses: "orisai/github-workflows/.github/actions/setup-php@v1"
         with:
           version: "${{ matrix.php-version }}"
           token: "${{ secrets.GITHUB_TOKEN }}"
@@ -145,7 +160,7 @@ jobs:
   example:
     steps:
       - name: "Composer"
-        uses: "orisai/github-workflows/.github/actions/setup-composer@v1.x"
+        uses: "orisai/github-workflows/.github/actions/setup-composer@v1"
 ```
 
 Inputs:
@@ -169,7 +184,7 @@ jobs:
   example:
     steps:
       - name: "PHPUnit"
-        uses: "orisai/github-workflows/.github/actions/phpunit@v1.x"
+        uses: "orisai/github-workflows/.github/actions/phpunit@v1"
         with:
           command: "vendor/bin/phpunit"
           cache-path: "var/tools/PHPUnit"
@@ -200,7 +215,7 @@ jobs:
   example:
     steps:
       - name: "PHPStan"
-        uses: "orisai/github-workflows/.github/actions/phpstan@v1.x"
+        uses: "orisai/github-workflows/.github/actions/phpstan@v1"
         with:
           command: "vendor/bin/phpstan"
           cache-path: "var/tools/PHPStan"
@@ -231,7 +246,7 @@ jobs:
   example:
     steps:
       - name: "PHP_CodeSniffer"
-        uses: "orisai/github-workflows/.github/actions/php-codesniffer@v1.x"
+        uses: "orisai/github-workflows/.github/actions/php-codesniffer@v1"
         with:
           command: "vendor/bin/phpcs"
           cache-path: "var/tools/PHP_CodeSniffer"
@@ -263,7 +278,7 @@ jobs:
   example:
     steps:
       - name: "Infection PHP"
-        uses: "orisai/github-workflows/.github/actions/infection-php@v1.x"
+        uses: "orisai/github-workflows/.github/actions/infection-php@v1"
         with:
           command: "vendor/bin/infection"
           cache-path: "var/tools/Infection"
@@ -303,7 +318,7 @@ jobs:
   example:
     steps:
       - name: "NodeJS"
-        uses: "orisai/github-workflows/.github/actions/setup-nodejs@v1.x"
+        uses: "orisai/github-workflows/.github/actions/setup-nodejs@v1"
         with:
           version: "${{ matrix.nodejs-version }}"
 
@@ -337,7 +352,7 @@ jobs:
     steps:
       - name: "Coveralls"
         if: "${{ github.event_name == 'push' }}"
-        uses: "orisai/github-workflows/.github/actions/coveralls-php-upload@v1.x"
+        uses: "orisai/github-workflows/.github/actions/coveralls-php-upload@v1"
         with:
           config: "tools/.coveralls.yml"
           token: "${{ secrets.GITHUB_TOKEN }}"
@@ -367,7 +382,7 @@ jobs:
     steps:
       - name: "Coveralls"
         if: "${{ github.event_name == 'push' }}"
-        uses: "orisai/github-workflows/.github/actions/coveralls-finish@v1.x"
+        uses: "orisai/github-workflows/.github/actions/coveralls-finish@v1"
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
 ```
@@ -434,24 +449,24 @@ jobs:
         uses: "actions/checkout@v2"
 
       - name: "PHP"
-        uses: "orisai/github-workflows/.github/actions/setup-php@v1.x"
+        uses: "orisai/github-workflows/.github/actions/setup-php@v1"
         with:
           version: "${{ matrix.php-version }}"
           coverage: "pcov"
           token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Composer"
-        uses: "orisai/github-workflows/.github/actions/setup-composer@v1.x"
+        uses: "orisai/github-workflows/.github/actions/setup-composer@v1"
 
       - name: "PHPUnit"
-        uses: "orisai/github-workflows/.github/actions/phpunit@v1.x"
+        uses: "orisai/github-workflows/.github/actions/phpunit@v1"
         with:
           command: "make coverage-clover"
           cache-path: "var/tools/PHPUnit"
 
       - name: "Coveralls"
         if: "${{ github.event_name == 'push' }}"
-        uses: "orisai/github-workflows/.github/actions/coveralls-php-upload@v1.x"
+        uses: "orisai/github-workflows/.github/actions/coveralls-php-upload@v1"
         with:
           config: "tools/.coveralls.yml"
           token: "${{ secrets.GITHUB_TOKEN }}"
@@ -478,7 +493,7 @@ jobs:
     steps:
       - name: "Coveralls"
         if: "${{ github.event_name == 'push' }}"
-        uses: "orisai/github-workflows/.github/actions/coveralls-finish@v1.x"
+        uses: "orisai/github-workflows/.github/actions/coveralls-finish@v1"
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
 ```
@@ -524,16 +539,16 @@ jobs:
         uses: "actions/checkout@v2"
 
       - name: "PHP"
-        uses: "orisai/github-workflows/.github/actions/setup-php@v1.x"
+        uses: "orisai/github-workflows/.github/actions/setup-php@v1"
         with:
           version: "${{ matrix.php-version }}"
           token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Composer"
-        uses: "orisai/github-workflows/.github/actions/setup-composer@v1.x"
+        uses: "orisai/github-workflows/.github/actions/setup-composer@v1"
 
       - name: "PHPStan"
-        uses: "orisai/github-workflows/.github/actions/phpstan@v1.x"
+        uses: "orisai/github-workflows/.github/actions/phpstan@v1"
         with:
           command: "make phpstan"
           cache-path: "var/tools/PHPStan"
@@ -584,16 +599,16 @@ jobs:
         uses: "actions/checkout@v2"
 
       - name: "PHP"
-        uses: "orisai/github-workflows/.github/actions/setup-php@v1.x"
+        uses: "orisai/github-workflows/.github/actions/setup-php@v1"
         with:
           version: "${{ matrix.php-version }}"
           token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Composer"
-        uses: "orisai/github-workflows/.github/actions/setup-composer@v1.x"
+        uses: "orisai/github-workflows/.github/actions/setup-composer@v1"
 
       - name: "PHP_CodeSniffer"
-        uses: "orisai/github-workflows/.github/actions/php-codesniffer@v1.x"
+        uses: "orisai/github-workflows/.github/actions/php-codesniffer@v1"
         with:
           command: "make cs ARGS='--report=checkstyle -q | vendor/bin/cs2pr'"
           cache-path: "var/tools/PHP_CodeSniffer"
@@ -641,23 +656,23 @@ jobs:
         uses: "actions/checkout@v2"
 
       - name: "PHP"
-        uses: "orisai/github-workflows/.github/actions/setup-php@v1.x"
+        uses: "orisai/github-workflows/.github/actions/setup-php@v1"
         with:
           version: "${{ matrix.php-version }}"
           coverage: "pcov"
           token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Composer"
-        uses: "orisai/github-workflows/.github/actions/setup-composer@v1.x"
+        uses: "orisai/github-workflows/.github/actions/setup-composer@v1"
 
       - name: "PHPUnit"
-        uses: "orisai/github-workflows/.github/actions/phpunit@v1.x"
+        uses: "orisai/github-workflows/.github/actions/phpunit@v1"
         with:
           command: "make mutations-tests"
           cache-path: "var/tools/PHPUnit"
 
       - name: "Infection PHP"
-        uses: "orisai/github-workflows/.github/actions/infection-php@v1.x"
+        uses: "orisai/github-workflows/.github/actions/infection-php@v1"
         with:
           command: "make mutations-infection ARGS='--logger-github'"
           cache-path: "var/tools/Infection"
