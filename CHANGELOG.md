@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/orisai/github-workflows/compare/1.0.0...HEAD)
 
+### Added
+
+- Actions
+  - Status Check
+
 ## [1.0.0](https://github.com/orisai/github-workflows/releases/tag/1.0.0) - 2022-02-15
+
+### Added
 
 - Workflows
 	- Lock closed threads

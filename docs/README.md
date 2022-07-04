@@ -19,6 +19,7 @@
 	- [Setup NodeJS](#setup-nodejs)
 	- [Coveralls PHP upload](#coveralls-php-upload)
 	- [Coveralls finish](#coveralls-finish)
+	- [Status Check (for branch protection)](#status-check-for-branch-protection)
 - [Examples](#examples)
 	- [PHPUnit and Coveralls](#phpunit-and-coveralls-example)
 	- [PHPStan](#phpstan-example)
@@ -394,6 +395,55 @@ Inputs:
 - GitHub token for Coveralls
 - type: `string`
 - required
+
+### Status Check (for branch protection)
+
+If you use branch protection rules and want to check all jobs from matrix pass you may end up configuring tens of matrix
+variations. e.g. PHP 7.2 - 8.1 on Linux, Windows and Mac result into 15 variations of single job. Each of them has to be
+set via GitHub UI.
+
+![GitHub branch protection status checks screenshot](status-check.png)
+
+Instead, we just set one job per workflow to be checked and job itself specifies (by `needs`) which jobs have to pass.
+
+```yaml
+jobs:
+  status-check:
+    name: "Status check - ${{ github.workflow }}"
+    runs-on: "ubuntu-latest"
+    needs: [ "list", "of", "required", "jobs" ]
+
+    if: "${{ always() }}"
+
+    steps:
+      - name: "Check required jobs are successful"
+        uses: "orisai/github-workflows/.github/actions/status-check@v1"
+        with:
+          needs: "${{ toJSON(needs) }}"
+```
+
+Inputs:
+
+`needs`
+
+- `${{ needs }}` context
+- type: `string`
+- required
+- Just use the value from example. This input is really just a workaround.
+
+`allow-cancelled`
+
+- Allow jobs being cancelled
+- type: `string`
+- default: `"true"`
+- Should be bool, but that's not supported. Change to `"false"` to turn it off.
+
+`allow-skipped`
+
+- Allow jobs being skipped
+- type: `string`
+- default: `"true"`
+- Should be bool, but that's not supported. Change to `"false"` to turn it off.
 
 ## Examples
 

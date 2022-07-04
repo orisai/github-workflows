@@ -1,0 +1,39 @@
+name: "Status check"
+description: "Finish collecting code coverage"
+
+inputs:
+  needs:
+    description: "Job 'needs' context"
+    required: true
+  allow-skipped:
+    description: "Allow jobs being skipped"
+    required: false
+    default: "true"
+  allow-cancelled:
+    description: "Allow jobs being cancelled"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: "Check required jobs are successful"
+      env:
+        RESULTS: "${{ join(fromJSON(inputs.needs).*.result, ' ') }}"
+        ALLOW_SKIPPED: "${{ inputs.allow-skipped }}"
+        ALLOW_CANCELLED: "${{ inputs.allow-cancelled }}"
+      shell: "bash"
+      run: |
+        for res in $RESULTS
+        do
+          if [ $res == 'skipped' ] && [ $ALLOW_SKIPPED != 'true' ]; then
+            exit 1
+          fi
+          if [ $res == 'cancelled' ] && [ $ALLOW_CANCELLED != 'true' ]; then
+            exit 1
+          fi
+          if [ $res == 'failure' ]; then
+            exit 1
+          fi
+        done
