@@ -23,3 +23,34 @@
 <p>
 
 ##
+
+```yaml
+name: "Static analysis"
+on: ["push", "pull_request"]
+
+jobs:
+  static-analysis:
+    name: "Static analysis"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "PHP"
+        uses: "orisai/github-workflows/.github/actions/setup-php@v1"
+        with:
+          version: "8.1"
+          token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "Composer"
+        uses: "orisai/github-workflows/.github/actions/setup-composer@v1"
+
+      - name: "PHPStan"
+        uses: "orisai/github-workflows/.github/actions/phpstan@v1"
+        with:
+          command: "vendor/bin/phpstan"
+          cache-path: "var/tools/PHPStan"
+```
+
+Example is simplified, check [documentation](docs/README.md) for complex version
