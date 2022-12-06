@@ -115,7 +115,7 @@ jobs:
   example:
     strategy:
       matrix:
-        php-version: [ "7.4", "8.0" ]
+        php-version: [ "7.4", "8.0", "8.1", "8.2" ]
 
     steps:
       - name: "PHP"
@@ -486,7 +486,7 @@ jobs:
     strategy:
       matrix:
         operating-system: [ "ubuntu-latest", "macos-latest", "windows-latest" ]
-        php-version: [ "7.4", "8.0", "8.1" ]
+        php-version: [ "7.4", "8.0", "8.1", "8.2" ]
         composer-flags: [ "" ]
         include:
           - operating-system: "ubuntu-latest"
@@ -537,7 +537,7 @@ jobs:
       matrix:
         include:
           - operating-system: "ubuntu-latest"
-            php-version: "8.0"
+            php-version: "8.1"
       fail-fast: false
 
     steps:
@@ -581,7 +581,7 @@ jobs:
       matrix:
         include:
           - operating-system: "ubuntu-latest"
-            php-version: "8.0"
+            php-version: "8.1"
       fail-fast: false
 
     steps:
@@ -641,7 +641,7 @@ jobs:
       matrix:
         include:
           - operating-system: "ubuntu-latest"
-            php-version: "8.0"
+            php-version: "8.1"
       fail-fast: false
 
     steps:
@@ -697,7 +697,7 @@ jobs:
       matrix:
         include:
           - operating-system: "ubuntu-latest"
-            php-version: "8.0"
+            php-version: "8.1"
 
     if: "github.event_name == 'push'"
 
