@@ -316,7 +316,7 @@ Setup [NodeJS](https://nodejs.dev), with dependencies caching and installation.
 jobs:
   strategy:
     matrix:
-      nodejs-version: [ "14" ]
+      nodejs-version: [ "16" ]
 
   example:
     steps:
@@ -354,7 +354,6 @@ jobs:
   example:
     steps:
       - name: "Coveralls"
-        if: "${{ github.event_name == 'push' }}"
         uses: "orisai/github-workflows/.github/actions/coveralls-php-upload@v1"
         with:
           config: "tools/.coveralls.yml"
@@ -384,7 +383,6 @@ jobs:
   example:
     steps:
       - name: "Coveralls"
-        if: "${{ github.event_name == 'push' }}"
         uses: "orisai/github-workflows/.github/actions/coveralls-finish@v1"
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
@@ -401,7 +399,7 @@ Inputs:
 ### Status Check (for branch protection)
 
 If you use branch protection rules and want to check all jobs from matrix pass you may end up configuring tens of matrix
-variations. e.g. PHP 7.2 - 8.1 on Linux, Windows and Mac result into 15 variations of single job. Each of them has to be
+variations. e.g. PHP 7.4 - 8.2 on Linux, Windows and Mac result into 12 variations of single job. Each of them has to be
 set via GitHub UI.
 
 ![GitHub branch protection status checks screenshot](status-check.png)
@@ -480,25 +478,38 @@ concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 
+permissions:
+    contents: "read"
+
 jobs:
   tests:
     name: "Tests"
     runs-on: "${{ matrix.operating-system }}"
+    continue-on-error: "${{ matrix.experimental }}"
+
+    if: |
+      github.event_name != 'pull_request'
+      || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
 
     strategy:
       matrix:
         operating-system: [ "ubuntu-latest", "macos-latest", "windows-latest" ]
-        php-version: [ "7.4", "8.0", "8.1", "8.2" ]
+        php-version: [ "7.4", "8.0", "8.1" ]
         composer-flags: [ "" ]
+        experimental: [ false ]
         include:
           - operating-system: "ubuntu-latest"
             php-version: "7.4"
-            composer-flags: "--prefer-lowest"
-      fail-fast: false
+            composer-flags: "--prefer-lowest --prefer-stable"
+            experimental: false
+          - operating-system: "ubuntu-latest"
+            php-version: "8.2"
+            composer-flags: "--ignore-platform-req=php+"
+            experimental: false
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v3"
 
       - name: "PHP"
         uses: "orisai/github-workflows/.github/actions/setup-php@v1"
@@ -509,6 +520,8 @@ jobs:
 
       - name: "Composer"
         uses: "orisai/github-workflows/.github/actions/setup-composer@v1"
+        with:
+          command: "composer update --no-interaction --no-progress --prefer-dist ${{ matrix.composer-flags }}"
 
       - name: "PHPUnit"
         uses: "orisai/github-workflows/.github/actions/phpunit@v1"
@@ -517,14 +530,13 @@ jobs:
           cache-path: "var/tools/PHPUnit"
 
       - name: "Coveralls"
-        if: "${{ github.event_name == 'push' }}"
         uses: "orisai/github-workflows/.github/actions/coveralls-php-upload@v1"
         with:
           config: "tools/.coveralls.yml"
           token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Upload logs"
-        uses: "actions/upload-artifact@v2"
+        uses: "actions/upload-artifact@v3"
         with:
           name: "Logs - Tests (${{ matrix.operating-system }}, ${{ matrix.php-version }}, ${{ matrix.composer-flags }})"
           path: "var/log"
@@ -535,17 +547,19 @@ jobs:
     needs: "tests"
     runs-on: "${{ matrix.operating-system }}"
 
+    if: |
+      github.event_name != 'pull_request'
+      || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
+
     strategy:
       matrix:
         include:
           - operating-system: "ubuntu-latest"
             php-version: "8.1"
-      fail-fast: false
 
     steps:
       - name: "Coveralls"
-        if: "${{ github.event_name == 'push' }}"
-        uses: "orisai/github-workflows/.github/actions/coveralls-finish@v1"
+        uses: "orisai/github-workflows/.github/actions/coveralls-finish@v1.x"
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
 ```
@@ -574,21 +588,27 @@ concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 
+permissions:
+    contents: "read"
+
 jobs:
   static-analysis:
     name: "Static analysis"
     runs-on: "${{ matrix.operating-system }}"
+
+    if: |
+      github.event_name != 'pull_request'
+      || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
 
     strategy:
       matrix:
         include:
           - operating-system: "ubuntu-latest"
             php-version: "8.1"
-      fail-fast: false
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v3"
 
       - name: "PHP"
         uses: "orisai/github-workflows/.github/actions/setup-php@v1"
@@ -634,21 +654,27 @@ concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 
+permissions:
+    contents: "read"
+
 jobs:
   coding-standard:
     name: "Coding standard"
     runs-on: "${{ matrix.operating-system }}"
+
+    if: |
+      github.event_name != 'pull_request'
+      || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
 
     strategy:
       matrix:
         include:
           - operating-system: "ubuntu-latest"
             php-version: "8.1"
-      fail-fast: false
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v3"
 
       - name: "PHP"
         uses: "orisai/github-workflows/.github/actions/setup-php@v1"
@@ -690,10 +716,17 @@ concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 
+permissions:
+    contents: "read"
+
 jobs:
   tests-mutations:
     name: "Test for mutants"
     runs-on: "${{ matrix.operating-system }}"
+
+    if: |
+      github.event_name != 'pull_request'
+      || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
 
     strategy:
       matrix:
@@ -701,11 +734,9 @@ jobs:
           - operating-system: "ubuntu-latest"
             php-version: "8.1"
 
-    if: "github.event_name == 'push'"
-
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v3"
 
       - name: "PHP"
         uses: "orisai/github-workflows/.github/actions/setup-php@v1"
@@ -731,7 +762,7 @@ jobs:
           stryker-token: "${{ secrets.STRYKER_DASHBOARD_API_KEY }}"
 
       - name: "Upload logs"
-        uses: "actions/upload-artifact@v2"
+        uses: "actions/upload-artifact@v3"
         with:
           name: "Logs - Mutations"
           path: "var/coverage/mutations/infection.log"
