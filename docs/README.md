@@ -310,6 +310,8 @@ Inputs:
 
 Setup [NodeJS](https://nodejs.dev), with dependencies caching and installation.
 
+- Supports only npm, not yarn or pnpm
+
 ```yaml
 jobs:
   strategy:
