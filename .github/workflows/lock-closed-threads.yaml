@@ -22,20 +22,20 @@ jobs:
 
     steps:
       - name: "Lock"
-        uses: "dessant/lock-threads@v2"
+        uses: "dessant/lock-threads@v4"
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
-          issue-lock-inactive-days: "${{ inputs.issue-lock-inactive-days }}"
+          issue-inactive-days: "${{ inputs.issue-lock-inactive-days }}"
           issue-lock-reason: "resolved"
-          issue-lock-comment: >
+          issue-comment: >
             This issue has been automatically locked since there
             has not been any recent activity after it was closed.
             Please open a new issue for related bugs.
 
-          pr-lock-inactive-days: "${{ inputs.pr-lock-inactive-days }}"
+          pr-inactive-days: "${{ inputs.pr-lock-inactive-days }}"
           pr-lock-reason: "resolved"
-          pr-lock-comment: >
+          pr-comment: >
             This pull request has been automatically locked since there
             has not been any recent activity after it was closed.
             Please open a new issue for related bugs.

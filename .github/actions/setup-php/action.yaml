@@ -25,7 +25,7 @@ runs:
 
   steps:
     - name: "Create PHP extensions cache key"
-      uses: "actions/github-script@v3"
+      uses: "actions/github-script@v6"
       id: "php-extensions-cache-key"
       with:
         script: "return '${{ inputs.extensions }}'.replace(/, /g, '+');"
@@ -40,7 +40,7 @@ runs:
         key: "ori-php-src-${{ steps.php-extensions-cache-key.outputs.result }}"
 
     - name: "Cache PHP extensions"
-      uses: "actions/cache@v2"
+      uses: "actions/cache@v3"
       with:
         path: "${{ steps.php-extensions-cache.outputs.dir }}"
         key: "${{ steps.php-extensions-cache.outputs.key }}"

@@ -19,7 +19,7 @@ runs:
 
   steps:
     - name: "Cache Infection data"
-      uses: "actions/cache@v2"
+      uses: "actions/cache@v3"
       with:
         path: "${{ inputs.cache-path }}"
         key: "ori-php-infection-${{ runner.os }}"

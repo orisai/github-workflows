@@ -21,14 +21,14 @@ runs:
       run: 'echo "::set-output name=dir::$(npm config get cache)"'
 
     - name: "Cache NodeJS dependencies"
-      uses: "actions/cache@v2"
+      uses: "actions/cache@v3"
       with:
         path: "${{ steps.node-npm-cache.outputs.dir }}"
         key: "ori-js-nodejs-${{ runner.os }}-${{ hashFiles('**/package.json', '**/package-lock.json') }}"
         restore-keys: "ori-js-nodejs-${{ runner.os }}-"
 
     - name: "Install NodeJS"
-      uses: "actions/setup-node@v1.4.4"
+      uses: "actions/setup-node@v3"
       with:
         node-version: "${{ inputs.version }}"
 
