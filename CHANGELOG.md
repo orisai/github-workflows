@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/orisai/github-workflows/compare/1.1.0...HEAD)
 
+### Changed
+
 - Update all dependencies to latest version (as available at 2022-12-07)
+
+### Fixed
+
+- Fix `set-output` deprecation
 
 ## [1.1.0](https://github.com/orisai/github-workflows/compare/1.0.0...1.1.0) - 2022-07-04
 
