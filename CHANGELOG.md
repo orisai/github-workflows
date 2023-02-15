@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/orisai/github-workflows/compare/1.1.1...HEAD)
 
+## [1.1.2](https://github.com/orisai/github-workflows/compare/1.1.1...1.1.2) - 2023-02-15
+
 ### Fixed
 
 - Coveralls PHP Upload: fix flag name to differentiate jobs and matrix variations
