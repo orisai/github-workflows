@@ -43,8 +43,8 @@ runs:
       uses: "actions/cache@v3"
       with:
         path: "${{ steps.php-extensions-cache.outputs.dir }}"
-        key: "${{ steps.php-extensions-cache.outputs.key }}"
-        restore-keys: "${{ steps.php-extensions-cache.outputs.key }}"
+        key: "${{ steps.php-extensions-cache.outputs.key }}-${{ env.phpts }}"
+        restore-keys: "${{ steps.php-extensions-cache.outputs.key }}-${{ env.phpts }}"
 
     - name: "Install PHP"
       uses: "shivammathur/setup-php@v2"

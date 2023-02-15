@@ -18,12 +18,19 @@ runs:
   using: "composite"
 
   steps:
+    - name: "Create cache key"
+      uses: "actions/github-script@v6"
+      id: "cache-key"
+      with:
+        script: "return `ori-php-infection--job-${{ github.job }}--os-${{ runner.os }}--matrix-${{ toJson(matrix) }}--run`.replaceAll(',', '+').replaceAll(' ', '').replaceAll(/(?:\\r\\n|\\r|\\n)/g, '');"
+        result-encoding: "string"
+
     - name: "Cache Infection data"
       uses: "actions/cache@v3"
       with:
         path: "${{ inputs.cache-path }}"
-        key: "ori-php-infection-${{ runner.os }}"
-        restore-keys: "ori-php-infection-${{ runner.os }}"
+        key: "${{ steps.cache-key.outputs.result }}-${{ github.run_id }}"
+        restore-keys: "${{ steps.cache-key.outputs.result }}-"
 
     - name: "Mutation tests with report"
       if: "${{ inputs.stryker-token }}"

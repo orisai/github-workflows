@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Coveralls PHP Upload: fix flag name to differentiate jobs and matrix variations
+- Infection PHP: better cache isolation, support cache updates
+- PHP_CodeSniffer: better cache isolation, support cache updates
+- PHPStan: better cache isolation, support cache updates
+- PHPUnit: better cache isolation, support cache updates
+- Setup PHP: add (non) thread-safe PHP version to extensions cache key
 
 ## [1.1.1](https://github.com/orisai/github-workflows/compare/1.1.0...1.1.1) - 2022-12-07
 
