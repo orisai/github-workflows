@@ -22,9 +22,11 @@ jobs:
 
     steps:
       - name: "Lock"
-        uses: "dessant/lock-threads@v4"
+        uses: "dessant/lock-threads@v5"
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+          process-only: 'issues, prs'
 
           issue-inactive-days: "${{ inputs.issue-lock-inactive-days }}"
           issue-lock-reason: "resolved"

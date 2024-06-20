@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/orisai/github-workflows/compare/1.1.1...v1.x)
 
+### Changed
+
+- Update all dependencies to latest version (as available at 2024-06-20)
+
 ## [1.1.2](https://github.com/orisai/github-workflows/compare/1.1.1...1.1.2) - 2023-02-15
 
 ### Fixed
