@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Update all dependencies to latest version (as available at 2026-09-30)
   - Actions run on Node.js 24, self-hosted runners must be on version 2.327.1 or newer
 - Setup NodeJS: disable automatic caching of `actions/setup-node`, dependencies are already cached by this action
+- PHPStan: save result cache even when PHPStan reports errors
 
 ### Fixed
 

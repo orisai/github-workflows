@@ -21,8 +21,8 @@ runs:
         script: "return `ori-php-phpstan--job-${{ github.job }}--os-${{ runner.os }}--matrix-${{ toJson(matrix) }}--run`.replaceAll(',', '+').replaceAll(' ', '').replaceAll(/(?:\\r\\n|\\r|\\n)/g, '');"
         result-encoding: "string"
 
-    - name: "Cache PHPStan data"
-      uses: "actions/cache@v6"
+    - name: "Restore PHPStan data"
+      uses: "actions/cache/restore@v6"
       with:
         path: "${{ inputs.cache-path }}"
         key: "${{ steps.cache-key.outputs.result }}-${{ github.run_id }}"
@@ -31,3 +31,10 @@ runs:
     - name: "PHPStan"
       shell: "bash"
       run: "${{ inputs.command }}"
+
+    - name: "Save PHPStan data"
+      uses: "actions/cache/save@v6"
+      if: "${{ !cancelled() }}"
+      with:
+        path: "${{ inputs.cache-path }}"
+        key: "${{ steps.cache-key.outputs.result }}-${{ github.run_id }}"
