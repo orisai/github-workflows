@@ -19,14 +19,14 @@ runs:
 
   steps:
     - name: "Create cache key"
-      uses: "actions/github-script@v7"
+      uses: "actions/github-script@v9"
       id: "cache-key"
       with:
         script: "return `ori-php-infection--job-${{ github.job }}--os-${{ runner.os }}--matrix-${{ toJson(matrix) }}--run`.replaceAll(',', '+').replaceAll(' ', '').replaceAll(/(?:\\r\\n|\\r|\\n)/g, '');"
         result-encoding: "string"
 
     - name: "Cache Infection data"
-      uses: "actions/cache@v4"
+      uses: "actions/cache@v6"
       with:
         path: "${{ inputs.cache-path }}"
         key: "${{ steps.cache-key.outputs.result }}-${{ github.run_id }}"

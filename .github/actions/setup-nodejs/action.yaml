@@ -21,16 +21,17 @@ runs:
       run: 'echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT'
 
     - name: "Cache NodeJS dependencies"
-      uses: "actions/cache@v4"
+      uses: "actions/cache@v6"
       with:
         path: "${{ steps.node-npm-cache.outputs.dir }}"
         key: "ori-js-nodejs-${{ runner.os }}-${{ hashFiles('**/package.json', '**/package-lock.json') }}"
         restore-keys: "ori-js-nodejs-${{ runner.os }}-"
 
     - name: "Install NodeJS"
-      uses: "actions/setup-node@v4"
+      uses: "actions/setup-node@v7"
       with:
         node-version: "${{ inputs.version }}"
+        package-manager-cache: "false"
 
     - name: "Install NodeJS dependencies"
       shell: "bash"

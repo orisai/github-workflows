@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: "Lock"
-        uses: "dessant/lock-threads@v5"
+        uses: "dessant/lock-threads@v6"
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 

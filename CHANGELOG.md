@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/orisai/github-workflows/compare/1.1.3...v1.x)
 
+### Changed
+
+- Update all dependencies to latest version (as available at 2026-09-30)
+  - Actions run on Node.js 24, self-hosted runners must be on version 2.327.1 or newer
+- Setup NodeJS: disable automatic caching of `actions/setup-node`, dependencies are already cached by this action
+
+### Fixed
+
+- Lock closed threads: support new GitHub token format, which is longer than previous validation of `dessant/lock-threads` allowed
+
 ## [1.1.3](https://github.com/orisai/github-workflows/compare/1.1.2...1.1.3) - 2024-06-20
 
 ### Changed
